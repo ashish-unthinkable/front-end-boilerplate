@@ -1,11 +1,42 @@
+import { useEffect, useMemo } from 'react'
 import { Outlet } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { setCredentials, finishInitialCheck } from '@/features/auth/authSlice'
+import { useGetProfileQuery } from '@/services/userApi'
+import { useAuth } from '@/hooks/useAuth'
 
 export const AppLayout = () => {
+  const dispatch = useDispatch()
+  const { isAuthenticated, user: authUser, isInitializing } = useAuth()
+  const { data: profileUser, isSuccess, isError, isLoading } = useGetProfileQuery(undefined, {
+    skip: isAuthenticated || !isInitializing,
+  })
+
+  useEffect(() => {
+    if (isSuccess && profileUser) {
+      dispatch(setCredentials({ user: profileUser, token: null }))
+    } else if (isError) {
+      dispatch(finishInitialCheck())
+    } else if (!isLoading && !isAuthenticated) {
+      // If not loading, not authenticated and no query running, we are done
+      dispatch(finishInitialCheck())
+    }
+  }, [isSuccess, isError, isLoading, profileUser, dispatch, isAuthenticated])
+
+  const currentUser = useMemo(() => authUser || profileUser, [authUser, profileUser])
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-gray-900">Frontend Boilerplate</h1>
+          {isAuthenticated && (
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-600">
+                Welcome, {currentUser?.email}
+              </span>
+            </div>
+          )}
         </div>
       </header>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

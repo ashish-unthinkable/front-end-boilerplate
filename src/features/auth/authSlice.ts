@@ -3,8 +3,9 @@ import { AuthState, LoginResponse } from './authTypes'
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('token'),
-  isAuthenticated: !!localStorage.getItem('token'),
+  token: null,
+  isAuthenticated: false,
+  isInitializing: true,
 }
 
 const authSlice = createSlice({
@@ -18,16 +19,19 @@ const authSlice = createSlice({
       state.user = user
       state.token = token
       state.isAuthenticated = true
-      localStorage.setItem('token', token)
+      state.isInitializing = false
     },
     logout: (state) => {
       state.user = null
       state.token = null
       state.isAuthenticated = false
-      localStorage.removeItem('token')
+      state.isInitializing = false
+    },
+    finishInitialCheck: (state) => {
+      state.isInitializing = false
     },
   },
 })
 
-export const { setCredentials, logout } = authSlice.actions
+export const { setCredentials, logout, finishInitialCheck } = authSlice.actions
 export default authSlice.reducer

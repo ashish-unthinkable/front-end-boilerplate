@@ -1,7 +1,5 @@
 export interface User {
-  id: string
+  _id: string
   email: string
-  name: string
-  role: 'admin' | 'user'
-  avatar?: string
+  provider: 'local' | 'google'
 }
