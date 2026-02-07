@@ -18,7 +18,7 @@ export const Login = () => {
     try {
       const userData = await login({ email, password }).unwrap()
       dispatch(setCredentials(userData))
-      navigate(APP_ROUTES.DASHBOARD, { replace: true })
+      navigate(APP_ROUTES.HOME, { replace: true })
     } catch (err) {
       // Error is handled by RTK Query's error state
     }

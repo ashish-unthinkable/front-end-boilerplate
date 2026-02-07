@@ -10,7 +10,7 @@ export const PublicRoute = () => {
   }
 
   if (isAuthenticated) {
-    return <Navigate to={APP_ROUTES.DASHBOARD} replace />
+    return <Navigate to={APP_ROUTES.HOME} replace />
   }
 
   return <Outlet />
