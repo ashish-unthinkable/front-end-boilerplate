@@ -17,11 +17,11 @@ export const AppLayout = () => {
       dispatch(setCredentials({ user: profileUser, token: null }))
     } else if (isError) {
       dispatch(finishInitialCheck())
-    } else if (!isLoading && !isAuthenticated) {
-      // If not loading, not authenticated and no query running, we are done
+    } else if (!isLoading && !isAuthenticated && !isInitializing) {
+      // Small safeguard: if we are not initializing and not auth, ensure state is sane
       dispatch(finishInitialCheck())
     }
-  }, [isSuccess, isError, isLoading, profileUser, dispatch, isAuthenticated])
+  }, [isSuccess, isError, isLoading, profileUser, dispatch, isAuthenticated, isInitializing])
 
   const currentUser = useMemo(() => authUser || profileUser, [authUser, profileUser])
 
